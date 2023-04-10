@@ -1,0 +1,31 @@
+﻿@{
+    // Preparing for new sorting before clicking the field name.
+    string newSortOrder = string.Empty;
+    string sortArrow = string.Empty;
+
+    if (IsSortFieldsValid(SortOrderOptions.ASC))
+    {
+        newSortOrder = nameof(SortOrderOptions.DESC);
+        sortArrow = "<i class=\"fa-solid fa-sort-up\"></i>";
+    }
+    else if (IsSortFieldsValid(SortOrderOptions.DESC))
+    {
+        newSortOrder = nameof(SortOrderOptions.ASC);
+        sortArrow = "<i class=\"fa-solid fa-sort-down\"></i>";
+    } else
+    {
+        // At the first glance when you have come to the website
+        // or after clicking other fields for resting the filed clicked.
+        newSortOrder = nameof(SortOrderOptions.DESC);
+        sortArrow = "<i class=\"fa-solid fa-sort-up\"></i>";
+    }
+
+    // FUNCTIONS
+    bool IsSortFieldsValid(SortOrderOptions sortOrder) =>
+        ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder == sortOrder.ToString();
+}
+
+<th>
+    <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@ViewBag.ColumnName&sortOrder=@newSortOrder">@ViewBag.DisplayName</a>
+    @Html.Raw(sortArrow)
+</th>
