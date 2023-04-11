@@ -93,6 +93,7 @@ namespace ServiceContracts.DTO.Persons
                 Gender = person.Gender,
                 Age = person.DateOfBirth.HasValue ? (uint)Math.Round((DateTime.Now - person.DateOfBirth.Value).TotalDays / 365.25) : null,
                 ReceiveNewsLetters = person.ReceiveNewsLetters,
+                Country = person.Country?.CountryName,
             };
 
             return personResponse;

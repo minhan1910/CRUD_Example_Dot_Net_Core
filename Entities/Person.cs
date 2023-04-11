@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
@@ -34,6 +35,12 @@ namespace Entities
 
         // bit
         public bool ReceiveNewsLetters { get; set; }
+
+        // [Column("TaxIdentificationNumber", TypeName= "varchar(8)")]
+        public string? TIN { get; set; }
+
+        [ForeignKey("CountryID")] 
+        public virtual Country? Country { get; set; } // virtual for common convention
 
         public bool IsNullOrEmptyPersonName() => string.IsNullOrEmpty(PersonName);         
 

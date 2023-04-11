@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO.Countries;
 
@@ -60,7 +61,7 @@ namespace Services
             };
         }
 
-        public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
+        public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
         {
             if (countryAddRequest is null)
             {
@@ -72,7 +73,7 @@ namespace Services
                 throw new ArgumentException(nameof(countryAddRequest.CountryName));
             }
 
-            if (IsDuplicateCountryName(countryAddRequest.CountryName))
+            if (await _db.Countries.CountAsync(temp => temp.CountryName == countryAddRequest.CountryName) > 0)
             {
                 throw new ArgumentException("Given country name have already existed!");
             }
@@ -86,7 +87,7 @@ namespace Services
 
             // of Repository
             _db.Countries.Add(country);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             // Convert from Country to CountryResponse
             CountryResponse countryResponse = country.ToCountryResponse();
@@ -94,19 +95,21 @@ namespace Services
             return countryResponse;
         }
 
-        public List<CountryResponse> GetAllCountries()
+        public async Task<List<CountryResponse>> GetAllCountries()
         {
-            return ConvertCountryDtosToCountryEntities();
+           return await _db.Countries.Select(country => country.ToCountryResponse())
+                            .ToListAsync();
         }
 
-        public CountryResponse? GetCountryByCountryID(Guid? countryID)
+        public async Task<CountryResponse?> GetCountryByCountryID(Guid? countryID)
         {
             if (!countryID.HasValue)
             {
                 throw new ArgumentNullException($"{countryID} is null");
             }
 
-            Country? countryResponseFromList = _db.Countries.FirstOrDefault(country => CompareCountryID(countryID.Value, country.CountryID));
+            Country? countryResponseFromList = await _db.Countries
+                                                  .FirstOrDefaultAsync(country => countryID.Value.Equals(country.CountryID));
 
             if (countryResponseFromList is null)
             {
@@ -114,23 +117,6 @@ namespace Services
             }
 
             return countryResponseFromList.ToCountryResponse();
-        }
-
-        #region Utility_Methods
-        private static bool CompareCountryID(Guid countryID, Guid country)
-        {
-            return country.Equals(countryID);
-        }
-
-        private List<CountryResponse> ConvertCountryDtosToCountryEntities()
-        {
-            return _db.Countries.Select(country => country.ToCountryResponse())
-                            .ToList();            
-        }
-
-        private bool IsDuplicateCountryName(string countryName)
-            => _db.Countries.Any(country => country.CountryName! == countryName);
-
-        #endregion
+        }  
     }
 }
