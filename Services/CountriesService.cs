@@ -6,13 +6,15 @@ namespace Services
 {
     public class CountriesService : ICountriesService
     {
-        private readonly List<Country> _countries = new();
+        private readonly PersonsDbContext _db;
 
-        public CountriesService(bool initialize = true)
+        public CountriesService(PersonsDbContext personsDbContext, bool initialize = true)
         {
+            _db = personsDbContext;
+
             if (initialize)
             {
-                _countries.AddRange(GenerateMockCountriesDataList());          
+                //_db.AddRange(GenerateMockCountriesDataList());          
             }
         }
 
@@ -83,7 +85,8 @@ namespace Services
             };
 
             // of Repository
-            _countries.Add(country);
+            _db.Countries.Add(country);
+            _db.SaveChanges();
 
             // Convert from Country to CountryResponse
             CountryResponse countryResponse = country.ToCountryResponse();
@@ -103,7 +106,7 @@ namespace Services
                 throw new ArgumentNullException($"{countryID} is null");
             }
 
-            Country? countryResponseFromList = _countries.FirstOrDefault(country => CompareCountryID(countryID.Value, country.CountryID));
+            Country? countryResponseFromList = _db.Countries.FirstOrDefault(country => CompareCountryID(countryID.Value, country.CountryID));
 
             if (countryResponseFromList is null)
             {
@@ -121,12 +124,12 @@ namespace Services
 
         private List<CountryResponse> ConvertCountryDtosToCountryEntities()
         {
-            return _countries.Select(country => country.ToCountryResponse())
+            return _db.Countries.Select(country => country.ToCountryResponse())
                             .ToList();            
         }
 
         private bool IsDuplicateCountryName(string countryName)
-            => _countries.Any(country => country.CountryName! == countryName);
+            => _db.Countries.Any(country => country.CountryName! == countryName);
 
         #endregion
     }

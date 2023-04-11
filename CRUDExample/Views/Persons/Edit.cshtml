@@ -1,15 +1,18 @@
-﻿@model PersonAddRequest
+﻿@model PersonUpdateRequest
 
 @{
-    ViewBag.Title = "Create Person";
+    ViewBag.Title = "Edit Person";
 }
 
 <a asp-controller="Persons" asp-action="Index">Back to Persons list</a>
 
-<h1>Create Peron</h1>
+<h1>Edit Peron</h1>
 
 <div class="center-box">
-    <form asp-controller="Persons" asp-action="Create" method="post">
+    <form asp-controller="Persons" asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="PersonID" />
+
         @*PersonName*@
         <div class="form-field flex">
             <div class="w-25">
@@ -110,10 +113,10 @@
             <div class="w-25">
             </div>
             <div class="flex-1">
-                <button class="button button-green-back">Submit</button>
+                <button class="button button-green-back">Edit</button>
 
                 <div asp-validation-summary="All" class="text-red"></div>
-
+                
                 @if (ViewBag.Errors != null)
                 {
                     <div class="text-red ml">
@@ -127,6 +130,7 @@
                 }
             </div>
         </div>
+       
     </form>
 </div>
 
