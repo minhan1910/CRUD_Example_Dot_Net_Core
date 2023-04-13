@@ -1,5 +1,7 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
+using RepositoryContracts;
 using ServiceContracts;
 using Services;
 using System;
@@ -11,8 +13,10 @@ builder.Services.AddControllersWithViews();
 // Add services into IoC Container
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonService, PersonService>();
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
+builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 
-builder.Services.AddDbContext<PersonsDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"));

@@ -14,4 +14,12 @@ namespace ServiceContracts.DTO.Countries
             return new Country() { CountryName = CountryName };
         }
     }
+
+    public static class CountryExtension
+    {
+        public static CountryAddRequest ToCountryAddRequest(this Country country)
+        {
+            return new CountryAddRequest() { CountryName = country.CountryName };
+        }
+    }
 }
